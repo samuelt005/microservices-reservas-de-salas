@@ -20,7 +20,7 @@ public class UsuarioController {
         return usuarioService.listar();
     }
 
-    @PostMapping("/salvar")
+    @PostMapping
     public Usuario salvar(@RequestBody Usuario usuario) {
         return usuarioService.salvar(usuario);
     }
