@@ -1,5 +1,13 @@
 version: "3.8"
 
+x-healthcheck: &healthcheck
+  healthcheck:
+    test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 10s
+
 services:
   reserva:
     build:
@@ -31,12 +39,7 @@ services:
       - network_reserva
     volumes:
       - reserva_db_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+    <<: *healthcheck
 
   sala:
     build:
@@ -68,12 +71,7 @@ services:
       - network_sala
     volumes:
       - sala_db_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+    <<: *healthcheck
 
   usuario:
     build:
@@ -105,12 +103,7 @@ services:
       - network_usuario
     volumes:
       - usuario_db_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+    <<: *healthcheck
 
 networks:
   network_reserva:
