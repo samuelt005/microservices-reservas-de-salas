@@ -2,13 +2,34 @@ version: "3.8"
 
 x-healthcheck: &healthcheck
   healthcheck:
-    test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+    test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
     interval: 10s
     timeout: 5s
     retries: 5
     start_period: 10s
 
 services:
+  gateway:
+    build:
+      context: ./spring-api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      RESERVA_SERVICE_URL: "http://ms-reserva:8080"
+      SALA_SERVICE_URL: "http://ms-sala:8080"
+      USUARIO_SERVICE_URL: "http://ms-usuario:8080"
+    depends_on:
+      - reserva
+      - sala
+      - usuario
+    networks:
+      - network_reserva
+      - network_sala
+      - network_usuario
+
   reserva:
     build:
       context: ./reserva
