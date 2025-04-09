@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reservas")
+@RequestMapping("/")
 public class ReservaController {
     private final ReservaService reservaService;
 

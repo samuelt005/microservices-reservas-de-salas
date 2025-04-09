@@ -14,9 +14,9 @@ public class SwaggerController {
     @GetMapping("/config")
     public Map<String, String> swaggerConfig() {
         Map<String, String> services = new HashMap<>();
-        services.put("Reserva Service", "/service-1/v3/api-docs");
-        services.put("Sala Service", "/service-2/v3/api-docs");
-        services.put("Usuario Service", "/service-3/v3/api-docs");
+        services.put("Salas Service", "/salas/v3/api-docs");
+        services.put("Reservas Service", "/reservas/v3/api-docs");
+        services.put("Usuario Service", "/usuarios/v3/api-docs");
         return services;
     }
 }
