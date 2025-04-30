@@ -13,23 +13,29 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Reserva {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime dataHora;
-    private Long salaId;
-    private Long usuarioId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sala_id", nullable = false, referencedColumnName = "id")
+    private Sala sala;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
+    private Usuario usuario;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Reserva reserva = (Reserva) o;
-        return Objects.equals(id, reserva.id) && Objects.equals(dataHora, reserva.dataHora) && Objects.equals(salaId, reserva.salaId) && Objects.equals(usuarioId, reserva.usuarioId);
+        return Objects.equals(id, reserva.id) && Objects.equals(dataHora, reserva.dataHora) && Objects.equals(sala, reserva.sala) && Objects.equals(usuario, reserva.usuario);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, dataHora, salaId, usuarioId);
+        return Objects.hash(id, dataHora, sala, usuario);
     }
 }
