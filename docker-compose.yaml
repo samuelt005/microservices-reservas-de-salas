@@ -1,8 +1,16 @@
 version: "3.8"
 
-x-healthcheck: &healthcheck
+x-healthcheck-mysql: &healthcheck-mysql
   healthcheck:
     test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 10s
+
+x-healthcheck-rabbitmq: &healthcheck-rabbitmq
+  healthcheck:
+    test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
     interval: 10s
     timeout: 5s
     retries: 5
@@ -38,11 +46,18 @@ services:
       DB_USER: root
       DB_PASSWORD: root
       SPRING_PROFILES_ACTIVE: dev
+      SPRING_RABBITMQ_HOST: rabbitmq
+      # SPRING_RABBITMQ_PORT: 5672 # Porta padrão, geralmente não precisa
+      # SPRING_RABBITMQ_USERNAME: guest # Usuário padrão
+      # SPRING_RABBITMQ_PASSWORD: guest # Senha padrão
     depends_on:
       db_reserva:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - network_reserva
+      - network_messaging
 
   db_reserva:
     image: mysql:8.0
@@ -55,7 +70,7 @@ services:
       - network_reserva
     volumes:
       - reserva_db_data:/var/lib/mysql
-    <<: *healthcheck
+    <<: *healthcheck-mysql
 
   sala:
     build:
@@ -68,11 +83,15 @@ services:
       DB_USER: root
       DB_PASSWORD: root
       SPRING_PROFILES_ACTIVE: dev
+      SPRING_RABBITMQ_HOST: rabbitmq
     depends_on:
       db_sala:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - network_sala
+      - network_messaging
 
   db_sala:
     image: mysql:8.0
@@ -85,7 +104,7 @@ services:
       - network_sala
     volumes:
       - sala_db_data:/var/lib/mysql
-    <<: *healthcheck
+    <<: *healthcheck-mysql
 
   usuario:
     build:
@@ -98,11 +117,15 @@ services:
       DB_USER: root
       DB_PASSWORD: root
       SPRING_PROFILES_ACTIVE: dev
+      SPRING_RABBITMQ_HOST: rabbitmq
     depends_on:
       db_usuario:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - network_usuario
+      - network_messaging
 
   db_usuario:
     image: mysql:8.0
@@ -115,7 +138,23 @@ services:
       - network_usuario
     volumes:
       - usuario_db_data:/var/lib/mysql
-    <<: *healthcheck
+    <<: *healthcheck-mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - network_messaging
+    <<: *healthcheck-rabbitmq
 
 networks:
   network_reserva:
@@ -124,8 +163,11 @@ networks:
     driver: bridge
   network_usuario:
     driver: bridge
+  network_messaging:
+    driver: bridge
 
 volumes:
   reserva_db_data:
   sala_db_data:
   usuario_db_data:
+  rabbitmq_data:
