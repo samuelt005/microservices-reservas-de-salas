@@ -25,8 +25,8 @@ public class UsuarioController {
         return usuarioService.salvar(usuario);
     }
 
-    @PutMapping
-    public Usuario editar(@RequestBody Usuario usuario) {
-        return usuarioService.editar(usuario);
-    }
+    // @PutMapping
+    // public Usuario editar(@RequestBody Usuario usuario) {
+    //     return usuarioService.editar(usuario);
+    // }
 }

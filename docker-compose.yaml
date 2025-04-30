@@ -8,14 +8,6 @@ x-healthcheck-mysql: &healthcheck-mysql
     retries: 5
     start_period: 10s
 
-x-healthcheck-rabbitmq: &healthcheck-rabbitmq
-  healthcheck:
-    test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
-    interval: 10s
-    timeout: 5s
-    retries: 5
-    start_period: 10s
-
 services:
   gateway:
     build:
@@ -53,8 +45,6 @@ services:
     depends_on:
       db_reserva:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     networks:
       - network_reserva
       - network_messaging
@@ -86,8 +76,6 @@ services:
       SPRING_RABBITMQ_HOST: rabbitmq
     depends_on:
       db_sala:
-        condition: service_healthy
-      rabbitmq:
         condition: service_healthy
     networks:
       - network_sala
@@ -121,8 +109,6 @@ services:
     depends_on:
       db_usuario:
         condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     networks:
       - network_usuario
       - network_messaging
@@ -154,7 +140,6 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - network_messaging
-    <<: *healthcheck-rabbitmq
 
 networks:
   network_reserva:
