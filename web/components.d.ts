@@ -8,8 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ConfirmDialog: typeof import('./src/components/dialogs/ConfirmDialog.vue')['default']
-    CreateOrEditProducts: typeof import('./src/components/dialogs/CreateOrEditSalas.vue')['default']
-    CreateOrEditUsers: typeof import('./src/components/dialogs/CreateOrEditUsuarios.vue')['default']
+    CreateOrEditSalas: typeof import('./src/components/dialogs/CreateOrEditSalas.vue')['default']
+    CreateOrEditUsuarios: typeof import('./src/components/dialogs/CreateOrEditUsuarios.vue')['default']
     DefaultTable: typeof import('./src/components/DefaultTable.vue')['default']
     MapDialog: typeof import('./src/components/dialogs/MapDialog.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

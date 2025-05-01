@@ -17,7 +17,7 @@
       v-model="dialog"
       :usuario="usuario"
       :edit-mode="editMode"
-      @save="onSaveProduct"
+      @save="onSaveUsuario"
       @cancel="confirmClose = true"
     />
 
@@ -31,10 +31,15 @@
 </template>
 
 <script lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 import DefaultTable from "@/components/DefaultTable.vue";
 import CreateOrEditUsuarios from "@/components/dialogs/CreateOrEditUsuarios.vue";
+import {
+  createUsuario,
+  getUsuario,
+  getUsuarios, updateUsuario
+} from '@/services/usuariosService.js';
 
 export default {
   name: "ProductsPage",
@@ -44,7 +49,21 @@ export default {
     const dialog = ref(false);
     const confirmClose = ref(false);
     const editMode = ref(false);
-    const usuario = ref({id: null, nome: "", cpf: "", data_nascimento: "", data_cadastro: "", email: "", cep: "", cidade: "", numero: "", rua: "", telefone: "", senha: ""});
+    const usuario = ref({
+      nome: "string",
+      cpf: "string",
+      email: "string",
+      senha: "string",
+      dataNascimento: "2025-05-01",
+      dataCadastro: "2025-05-01",
+      endereco: {
+        telefone: "string",
+        rua: "string",
+        numero: "string",
+        cidade: "string",
+        cep: "string"
+      }
+    });
 
     const usuarios = ref([]);
 
@@ -52,10 +71,24 @@ export default {
       {title: "Nome", key: "name"},
       {title: "CPF", key: "cpf"},
       {title: "E-mail", key: "email"},
-      {title: "Data de Nascimento", key: "birthDate"},
-      {title: "Ativo", key: "inactive"},
+      {title: "Data de Nascimento", key: "dataNascimento"},
+      {title: "Data de Cadastro", key: "dataCadastro"},
+      {title: "Endereço", key: "endereco"},
       {title: "Ações", key: "actions", sortable: false}
     ];
+
+    onMounted(() => {
+      getData();
+    });
+
+    const getData = async () => {
+      try {
+        const res = await getUsuarios();
+        usuarios.value.push(...res);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+    };
 
     const openDialog = () => {
       usuario.value = {id: null, name: "", email: "", birthDate: 0};
@@ -69,15 +102,25 @@ export default {
       dialog.value = true;
     };
 
-    const onSaveProduct = (data) => {
+    const onSaveUsuario = async (data) => {
       if (editMode.value) {
-        const index = usuarios.value.findIndex(f => f.id === data.id);
-        usuarios.value[index] = {...data};
+        const statusCode = await updateUsuario(data.id, data);
+
+        if (statusCode === 200) {
+          const updatedFacility = await getUsuario(data.id);
+          const index = usuarios.value.findIndex(f => f.id === data.id);
+          usuarios.value[index] = updatedFacility;
+        }
       } else {
-        data.id = usuarios.value.length + 1;
-        usuarios.value.push({...data});
+        const createdFacility = await createUsuario(data);
+
+        if (createdFacility) {
+          usuarios.value.push(createdFacility);
+        }
       }
       dialog.value = false;
+
+      await getData();
     };
 
     const toggleActive = (item) => {
@@ -96,7 +139,7 @@ export default {
       headers,
       openDialog,
       editUsuario,
-      onSaveProduct,
+      onSaveUsuario,
       toggleActive,
       editMode
     };

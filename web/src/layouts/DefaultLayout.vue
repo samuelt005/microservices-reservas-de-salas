@@ -45,36 +45,16 @@
         density="comfortable"
       >
         <v-list-item
-          to="/facilities"
+          to="/salas"
           prepend-icon="mdi-store"
         >
-          Estabelecimentos
+          Salas
         </v-list-item>
         <v-list-item
-          to="/products"
+          to="/usuarios"
           prepend-icon="mdi-package-variant"
         >
-          Produtos
-        </v-list-item>
-        <v-list-item
-          to="/users"
-          prepend-icon="mdi-account-group"
-        >
           Usuários
-        </v-list-item>
-        <v-list-item
-          to="/support"
-          prepend-icon="mdi-chat"
-        >
-          Suporte
-        </v-list-item>
-        <v-list-item to="/login">
-          <template #prepend>
-            <v-icon color="error">
-              mdi-logout
-            </v-icon>
-          </template>
-          Sair
         </v-list-item>
       </v-list>
     </v-navigation-drawer>

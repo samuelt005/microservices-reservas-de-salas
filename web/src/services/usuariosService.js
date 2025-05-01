@@ -1,38 +1,32 @@
 import axios from 'axios';
 
-const collection = "/facilities";
+const collection = "/usuarios/";
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'http://localhost:8080',
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-export const getFacilities = async () => {
+export const getUsuarios = async () => {
   const res = await api.get(collection);
   return res.data;
 };
 
-export const getFacility = async (id) => {
+export const getUsuario = async (id) => {
   const res = await api.get(`${collection}/${id}`);
   return res.data;
 };
 
-export const createFacility = async (data) => {
-  console.log(data)
+export const createUsuario = async (data) => {
   const res = await api.post(collection, data);
   return res.data;
 };
 
-export const updateFacility = async (id, data) => {
+export const updateUsuario = async (id, data) => {
   const res = await api.put(`${collection}/${id}`, data);
-  return res.status;
-};
-
-export const toggleFacilityActive = async (id) => {
-  const res = await api.patch(`${collection}/${id}/toggle-status`);
   return res.status;
 };
 

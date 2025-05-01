@@ -31,10 +31,14 @@
 </template>
 
 <script lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 import CreateOrEditSalas from "@/components/dialogs/CreateOrEditSalas.vue";
 import DefaultTable from "@/components/DefaultTable.vue";
+import {
+  createSala, getSala,
+  getSalas, updateSala
+} from '@/services/salasService.js';
 
 export default {
   name: "SalasPage",
@@ -46,19 +50,26 @@ export default {
     const editMode = ref(false);
     const sala = ref({id: null, nome: "", capacidade: ""});
 
-    const salas = ref([
-      {
-        id: 1,
-        nome: "Sala 1",
-        capacidade: 10
-      }
-    ]);
+    const salas = ref([]);
 
     const headers = [
       {title: "Nome", key: "nome"},
       {title: "Capacidade", key: "capacidade"},
       {title: "Ações", key: "actions", sortable: false}
     ];
+
+    onMounted(() => {
+      getData();
+    });
+
+    const getData = async () => {
+      try {
+        const res = await getSalas();
+        salas.value.push(...res);
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+      }
+    };
 
     const openDialog = () => {
       sala.value = {id: null, nome: "", capacidade: "", value: 0};
@@ -72,15 +83,25 @@ export default {
       dialog.value = true;
     };
 
-    const onSaveSala = (data) => {
+    const onSaveSala = async (data) => {
       if (editMode.value) {
-        const index = salas.value.findIndex(f => f.id === data.id);
-        salas.value[index] = {...data};
+        const statusCode = await updateSala(data.id, data);
+
+        if (statusCode === 200) {
+          const updatedFacility = await getSala(data.id);
+          const index = salas.value.findIndex(f => f.id === data.id);
+          salas.value[index] = updatedFacility;
+        }
       } else {
-        data.id = salas.value.length + 1;
-        salas.value.push({...data});
+        const createdFacility = await createSala(data);
+
+        if (createdFacility) {
+          salas.value.push(createdFacility);
+        }
       }
       dialog.value = false;
+
+      await getData();
     };
 
     const toggleActive = (item) => {
