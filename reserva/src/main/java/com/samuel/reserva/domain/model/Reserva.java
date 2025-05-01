@@ -19,10 +19,10 @@ public class Reserva {
     private Long id;
     private LocalDateTime dataHora;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "sala_id", nullable = false, referencedColumnName = "id")
     private Sala sala;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false, referencedColumnName = "id")
     private Usuario usuario;
 
