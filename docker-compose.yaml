@@ -39,9 +39,6 @@ services:
       DB_PASSWORD: root
       SPRING_PROFILES_ACTIVE: dev
       SPRING_RABBITMQ_HOST: rabbitmq
-      # SPRING_RABBITMQ_PORT: 5672 # Porta padrão, geralmente não precisa
-      # SPRING_RABBITMQ_USERNAME: guest # Usuário padrão
-      # SPRING_RABBITMQ_PASSWORD: guest # Senha padrão
     depends_on:
       db_reserva:
         condition: service_healthy
@@ -131,7 +128,7 @@ services:
     container_name: rabbitmq
     restart: always
     ports:
-      - "5672:5672"
+      # - "5672:5672" // Disabled
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
